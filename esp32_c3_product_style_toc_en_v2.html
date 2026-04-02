@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ESP32-C3 Super Mini | Official-Style Getting Started Guide</title>
+  <style>
+    :root{
+      --bg:#f3f6fb;
+      --panel:#ffffff;
+      --panel-2:#f8fbff;
+      --text:#172033;
+      --muted:#667189;
+      --line:#e4ebf5;
+      --brand:#2a6df5;
+      --brand-2:#1748d1;
+      --brand-soft:#eef4ff;
+      --accent:#0f172a;
+      --good:#0f8f67;
+      --warn:#946200;
+      --warn-bg:#fff8e7;
+      --shadow:0 14px 36px rgba(17, 24, 39, 0.08);
+      --radius:22px;
+      --radius-sm:14px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, #ffffff 0, #f7faff 34%, #f3f6fb 100%);
+      line-height:1.72;
+    }
+
+    a{color:var(--brand)}
+
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:200;
+      backdrop-filter: blur(14px);
+      background:rgba(255,255,255,.82);
+      border-bottom:1px solid rgba(228,235,245,.9);
+    }
+    .topbar-inner{
+      max-width:1440px;
+      margin:0 auto;
+      padding:14px 26px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+    }
+    .logo{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-weight:800;
+      color:var(--accent);
+      letter-spacing:.01em;
+    }
+    .logo-badge{
+      width:38px;height:38px;border-radius:12px;
+      display:grid;place-items:center;
+      background:linear-gradient(135deg,#1e40af,#3b82f6);
+      color:#fff;font-weight:900;
+      box-shadow:0 10px 20px rgba(37,99,235,.28);
+    }
+    .top-links{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:8px;
+    }
+    .top-links a{
+      text-decoration:none;
+      color:var(--muted);
+      font-size:14px;
+      padding:8px 12px;
+      border-radius:999px;
+    }
+    .top-links a:hover{
+      background:var(--brand-soft);
+      color:var(--brand);
+    }
+
+    .hero{
+      padding:34px 24px 26px;
+    }
+    .hero-inner{
+      max-width:1440px;
+      margin:0 auto;
+      display:grid;
+      grid-template-columns:1.12fr .88fr;
+      gap:24px;
+      align-items:stretch;
+    }
+    .hero-copy{
+      background:linear-gradient(135deg,#0f172a 0%, #133b9b 48%, #2563eb 100%);
+      color:#fff;
+      border-radius:30px;
+      padding:34px;
+      box-shadow:0 26px 60px rgba(37,99,235,.16);
+      position:relative;
+      overflow:hidden;
+    }
+    .hero-copy::after{
+      content:"";
+      position:absolute;
+      inset:auto -80px -100px auto;
+      width:260px;height:260px;border-radius:50%;
+      background:rgba(255,255,255,.08);
+    }
+    .hero-kicker{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:999px;
+      background:rgba(255,255,255,.11);
+      border:1px solid rgba(255,255,255,.16);
+      font-size:13px;font-weight:600;
+      margin-bottom:16px;
+    }
+    .hero h1{
+      margin:0 0 12px;
+      font-size:44px;
+      line-height:1.08;
+      letter-spacing:-.04em;
+    }
+    .hero p{
+      margin:0;
+      color:rgba(255,255,255,.92);
+      font-size:17px;
+      max-width:780px;
+    }
+    .hero-badges{
+      display:flex;flex-wrap:wrap;gap:10px;
+      margin-top:22px;
+    }
+    .hero-badges span{
+      display:inline-flex;align-items:center;
+      padding:9px 13px;
+      border-radius:999px;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.18);
+      font-size:14px;
+    }
+    .hero-visual{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:30px;
+      padding:18px;
+      box-shadow:var(--shadow);
+      display:grid;
+      grid-template-rows:auto auto;
+      gap:16px;
+    }
+    .hero-visual img{
+      width:100%;
+      display:block;
+      border-radius:20px;
+      border:1px solid var(--line);
+      background:#fff;
+    }
+    .hero-specs{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
+    }
+    .mini-stat{
+      background:var(--panel-2);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+    }
+    .mini-stat .label{
+      font-size:12px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      margin-bottom:6px;
+    }
+    .mini-stat .value{
+      font-size:17px;
+      font-weight:800;
+      color:var(--accent);
+    }
+
+    .page{
+      max-width:1440px;
+      margin:0 auto;
+      padding:8px 24px 70px;
+      display:grid;
+      grid-template-columns:300px minmax(0,1fr);
+      gap:28px;
+      align-items:start;
+    }
+
+    .sidebar{
+      position:sticky;
+      top:82px;
+    }
+    .toc{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:26px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .toc-head{
+      padding:18px 18px 14px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg,#ffffff 0,#f9fbff 100%);
+    }
+    .toc-head h3{
+      margin:0 0 6px;
+      font-size:18px;
+      color:var(--accent);
+    }
+    .toc-head p{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.55;
+    }
+    .toc-list{
+      padding:10px;
+      max-height:calc(100vh - 190px);
+      overflow:auto;
+    }
+    .toc a{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      text-decoration:none;
+      color:var(--text);
+      border:1px solid transparent;
+      border-radius:14px;
+      padding:10px 12px;
+      transition:.18s ease;
+      margin:2px 0;
+      font-size:14px;
+      line-height:1.45;
+    }
+    .toc a .num{
+      flex:0 0 auto;
+      min-width:32px;
+      height:24px;
+      display:grid;
+      place-items:center;
+      border-radius:999px;
+      background:#eef2f7;
+      color:#52607a;
+      font-weight:700;
+      font-size:12px;
+      margin-top:1px;
+    }
+    .toc a:hover{
+      background:var(--brand-soft);
+      border-color:#d7e4ff;
+      color:var(--brand-2);
+    }
+    .toc a.active{
+      background:linear-gradient(180deg,#eef4ff 0,#e8f0ff 100%);
+      border-color:#cfe0ff;
+      color:var(--brand-2);
+    }
+    .toc a.active .num{
+      background:var(--brand);
+      color:#fff;
+    }
+
+    .content{min-width:0}
+
+    .section{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:30px;
+      box-shadow:var(--shadow);
+      margin-bottom:22px;
+    }
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin-bottom:12px;
+      padding:7px 11px;
+      border-radius:999px;
+      background:var(--brand-soft);
+      color:var(--brand-2);
+      font-size:12px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      font-weight:700;
+    }
+    h2{
+      margin:0 0 12px;
+      color:var(--accent);
+      font-size:32px;
+      line-height:1.16;
+      letter-spacing:-.02em;
+    }
+    h3{
+      margin:26px 0 10px;
+      color:var(--accent);
+      font-size:20px;
+      line-height:1.3;
+    }
+    p{margin:0 0 14px}
+    ul,ol{margin:10px 0 0 24px}
+    li{margin:7px 0}
+    .muted{color:var(--muted)}
+    .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+    .card{
+      background:linear-gradient(180deg,#ffffff 0,#fbfcff 100%);
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:18px;
+    }
+    .card strong{color:var(--accent)}
+    .stat-card .k{
+      font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)
+    }
+    .stat-card .v{
+      margin-top:6px;font-size:22px;font-weight:800;color:var(--accent)
+    }
+
+    .callout{
+      margin:16px 0;
+      padding:16px 18px;
+      border-radius:18px;
+      background:var(--brand-soft);
+      border:1px solid #d7e4ff;
+      color:#17408e;
+    }
+    .warn{
+      margin:16px 0;
+      padding:16px 18px;
+      border-radius:18px;
+      background:var(--warn-bg);
+      border:1px solid #f3dfa8;
+      color:var(--warn);
+    }
+    .good{
+      margin:16px 0;
+      padding:16px 18px;
+      border-radius:18px;
+      background:#ebfbf5;
+      border:1px solid #bfe9d7;
+      color:var(--good);
+    }
+
+    .feature-list{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+      margin-top:14px;
+    }
+    .feature-item{
+      background:#f9fbff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px 16px;
+    }
+
+    .image-card img{
+      width:100%;
+      display:block;
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:#fff;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      overflow:hidden;
+      border-radius:18px;
+      margin-top:14px;
+      font-size:15px;
+    }
+    th,td{
+      border:1px solid var(--line);
+      padding:13px 14px;
+      text-align:left;
+      vertical-align:top;
+    }
+    th{
+      background:#f8fbff;
+      color:var(--accent);
+      font-weight:800;
+    }
+
+    code{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      background:#edf2fb;
+      padding:2px 7px;
+      border-radius:8px;
+      font-size:.95em;
+    }
+    pre{
+      margin:12px 0 0;
+      padding:18px 20px;
+      background:#0b1220;
+      color:#e7efff;
+      border:1px solid #1e293b;
+      border-radius:18px;
+      overflow:auto;
+      font-size:14px;
+      line-height:1.65;
+      white-space:pre-wrap;
+    }
+
+    .steps{margin-top:8px}
+    .step{
+      display:flex;
+      gap:16px;
+      padding:16px 0;
+      border-top:1px dashed var(--line);
+    }
+    .step:first-child{border-top:none;padding-top:4px}
+    .step-num{
+      flex:0 0 42px;
+      width:42px;
+      height:42px;
+      display:grid;
+      place-items:center;
+      border-radius:999px;
+      background:linear-gradient(180deg,#2a6df5 0,#1748d1 100%);
+      color:#fff;
+      font-weight:800;
+      box-shadow:0 10px 18px rgba(37,99,235,.22);
+      margin-top:2px;
+    }
+
+    .footer{
+      max-width:1440px;
+      margin:0 auto;
+      padding:0 24px 54px;
+      color:var(--muted);
+      text-align:center;
+      font-size:14px;
+    }
+
+    @media (max-width:1150px){
+      .hero-inner{grid-template-columns:1fr}
+      .page{grid-template-columns:1fr}
+      .sidebar{position:relative;top:auto}
+      .toc-list{max-height:none}
+    }
+    @media (max-width:760px){
+      .hero,.page,.footer{padding-left:16px;padding-right:16px}
+      .topbar-inner{padding-left:16px;padding-right:16px}
+      .hero h1{font-size:36px}
+      .grid-2,.grid-3,.feature-list,.hero-specs{grid-template-columns:1fr}
+      .top-links{display:none}
+      .section{padding:22px}
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="logo">
+        <div class="logo-badge">C3</div>
+        <div>ESP32-C3 Super Mini</div>
+      </div>
+      <div class="top-links">
+        <a href="#quick-start">Quick Start</a>
+        <a href="#flash-guide">Flash Firmware</a>
+        <a href="#arduino-guide">Arduino</a>
+        <a href="#micropython-guide">MicroPython</a>
+        <a href="#troubleshooting">Troubleshooting</a>
+      </div>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <div class="hero-kicker">Product-style documentation • Beginner-first layout</div>
+        <h1>ESP32-C3 Super Mini<br>Official-Style Getting Started Guide</h1>
+        <p>
+          This guide keeps the full tutorial content, adds a left-side navigation menu, and upgrades the page design with a cleaner layout, richer visual hierarchy, and easier step-by-step instructions for beginners.
+        </p>
+        <div class="hero-badges">
+          <span>160 MHz RISC-V</span>
+          <span>2.4 GHz WiFi + BLE 5</span>
+          <span>Native USB CDC</span>
+          <span>WS2812 RGB on GPIO8</span>
+          <span>Arduino / MicroPython / ESP-IDF</span>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <img src="实物图.jpg" alt="ESP32-C3 Super Mini board photo">
+        <div class="hero-specs">
+          <div class="mini-stat">
+            <div class="label">Voltage</div>
+            <div class="value">5V USB → 3.3V logic</div>
+          </div>
+          <div class="mini-stat">
+            <div class="label">USB</div>
+            <div class="value">Native USB</div>
+          </div>
+          <div class="mini-stat">
+            <div class="label">LED</div>
+            <div class="value">GPIO8 RGB</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="page">
+    <aside class="sidebar">
+      <nav class="toc" aria-label="Page navigation">
+        <div class="toc-head">
+          <h3>On this page</h3>
+          <p>Use the left navigation to jump directly to the part you need, similar to a guided tutorial page.</p>
+        </div>
+        <div class="toc-list">
+          <a href="#overview"><span class="num">01</span><span>Product Overview</span></a>
+          <a href="#specifications"><span class="num">02</span><span>Technical Specifications</span></a>
+          <a href="#board-layout"><span class="num">03</span><span>Board Layout & Main Modules</span></a>
+          <a href="#circuit-overview"><span class="num">04</span><span>Circuit Overview</span></a>
+          <a href="#pin-definition"><span class="num">05</span><span>Pin Definition</span></a>
+          <a href="#usb-serial"><span class="num">06</span><span>USB & Serial</span></a>
+          <a href="#quick-start"><span class="num">07</span><span>Quick Start for Beginners</span></a>
+          <a href="#flash-guide"><span class="num">08</span><span>Flash Firmware (.bin)</span></a>
+          <a href="#flash-layout"><span class="num">09</span><span>Flash Layout & Parameters</span></a>
+          <a href="#arduino-guide"><span class="num">10</span><span>Arduino Setup Guide</span></a>
+          <a href="#micropython-guide"><span class="num">11</span><span>MicroPython Guide</span></a>
+          <a href="#espidf-guide"><span class="num">12</span><span>ESP-IDF Guide</span></a>
+          <a href="#interface-guide"><span class="num">13</span><span>I2C / SPI / UART</span></a>
+          <a href="#function-summary"><span class="num">14</span><span>Function Summary</span></a>
+          <a href="#troubleshooting"><span class="num">15</span><span>Troubleshooting</span></a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <section class="section" id="overview">
+        <div class="eyebrow">01 • Overview</div>
+        <h2>Product Overview</h2>
+        <p>
+          ESP32-C3 Super Mini is a compact IoT development board built around the ESP32-C3 platform. The ESP32-C3 family combines 2.4 GHz Wi-Fi, Bluetooth Low Energy, a 32-bit RISC-V CPU, and native USB support in a small footprint, which makes it a strong fit for beginner learning kits, smart home projects, displays, wireless sensors, and embedded prototyping.
+        </p>
+        <div class="grid-3">
+          <div class="card stat-card">
+            <div class="k">CPU</div>
+            <div class="v">160 MHz</div>
+            <div class="muted">32-bit RISC-V core</div>
+          </div>
+          <div class="card stat-card">
+            <div class="k">Wireless</div>
+            <div class="v">WiFi + BLE 5</div>
+            <div class="muted">2.4 GHz Wi-Fi and Bluetooth LE</div>
+          </div>
+          <div class="card stat-card">
+            <div class="k">Developer benefit</div>
+            <div class="v">Native USB</div>
+            <div class="muted">Power, programming, and serial over one cable</div>
+          </div>
+        </div>
+        <div class="good">This board is especially beginner-friendly because you can power it, flash it, and open a serial monitor through the built-in USB connection.</div>
+      </section>
+
+      <section class="section" id="specifications">
+        <div class="eyebrow">02 • Specs</div>
+        <h2>Technical Specifications</h2>
+        <table>
+          <tr><th>Item</th><th>Specification</th><th>Beginner explanation</th></tr>
+          <tr><td>Chip family</td><td>ESP32-C3</td><td>Main MCU platform used by the board</td></tr>
+          <tr><td>CPU</td><td>32-bit RISC-V, up to 160 MHz</td><td>Fast enough for sensors, LEDs, small displays, and wireless projects</td></tr>
+          <tr><td>Wireless</td><td>2.4 GHz Wi-Fi + Bluetooth LE 5</td><td>Can connect to routers, phones, BLE sensors, and smart devices</td></tr>
+          <tr><td>USB</td><td>Native USB CDC</td><td>No separate USB-UART bridge chip is needed for basic use</td></tr>
+          <tr><td>Logic voltage</td><td>3.3V</td><td>GPIO and peripherals should follow 3.3V logic rules</td></tr>
+          <tr><td>Input voltage</td><td>5V from USB</td><td>The USB port powers the board, then onboard regulation converts it to 3.3V</td></tr>
+          <tr><td>Onboard LED</td><td>WS2812 RGB LED on GPIO8</td><td>You can test code and animations without adding external LEDs</td></tr>
+          <tr><td>Common interfaces</td><td>I2C, SPI, UART, PWM, ADC</td><td>Supports sensors, displays, serial devices, and analog input use cases</td></tr>
+          <tr><td>Flash</td><td>Firmware-dependent in your uploaded packages</td><td>Keep firmware package and flash settings matched</td></tr>
+        </table>
+        <div class="warn">
+          Your uploaded files include both a MicroPython firmware name that references <code>2mflash</code> and an AT flashing configuration that uses auto-detect flash settings. Use the correct flashing package and matching addresses for the firmware you want to install.
+        </div>
+      </section>
+
+      <section class="section" id="board-layout">
+        <div class="eyebrow">03 • Hardware</div>
+        <h2>Board Layout & Main Modules</h2>
+        <div class="grid-2">
+          <div class="image-card">
+            <img src="实物图.jpg" alt="Board front view">
+          </div>
+          <div>
+            <p>This board is simple, compact, and organized for quick prototyping.</p>
+            <div class="feature-list">
+              <div class="feature-item"><strong>USB Type-C</strong><br><span class="muted">Power + flashing + serial output</span></div>
+              <div class="feature-item"><strong>BOOT button</strong><br><span class="muted">Used when entering download mode</span></div>
+              <div class="feature-item"><strong>RESET button</strong><br><span class="muted">Restarts the board</span></div>
+              <div class="feature-item"><strong>ESP32-C3 MCU</strong><br><span class="muted">Runs your firmware and application</span></div>
+              <div class="feature-item"><strong>WS2812 RGB LED</strong><br><span class="muted">Connected to GPIO8</span></div>
+              <div class="feature-item"><strong>3.3V regulator</strong><br><span class="muted">Converts USB 5V down to 3.3V</span></div>
+            </div>
+            <div class="callout">Because the board uses native USB, most users do not need CH340 or CP2102 drivers for normal operation.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="circuit-overview">
+        <div class="eyebrow">04 • Circuit</div>
+        <h2>Circuit Overview</h2>
+        <p>The internal signal path is easier to understand if you think of it as a simple chain:</p>
+        <pre>USB Type-C (5V power + USB data)
+        ↓
+Voltage regulator (LDO)
+        ↓
+3.3V power rail
+        ↓
+ESP32-C3 microcontroller
+        ↓
+GPIO pins → LEDs, sensors, displays, communication devices</pre>
+        <div class="grid-2">
+          <div class="card">
+            <strong>Power path</strong>
+            <p class="muted">The USB cable brings 5V into the board. The voltage regulator turns that into 3.3V for the ESP32-C3 and its logic-level peripherals.</p>
+          </div>
+          <div class="card">
+            <strong>Signal path</strong>
+            <p class="muted">GPIO pins are the connection points to external devices. On this board, GPIO8 is also wired to the onboard RGB LED.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="pin-definition">
+        <div class="eyebrow">05 • Pins</div>
+        <h2>Pin Definition</h2>
+        <div class="grid-2">
+          <div class="image-card">
+            <img src="引脚图.jpg" alt="Pinout diagram">
+          </div>
+          <div>
+            <p>Use the table below when wiring beginner projects such as OLED displays, temperature sensors, RGB LEDs, or serial modules.</p>
+            <table>
+              <tr><th>GPIO</th><th>Suggested role</th><th>Note</th></tr>
+              <tr><td>GPIO0</td><td>Digital I/O / boot related</td><td>Use carefully because boot behavior can depend on startup state</td></tr>
+              <tr><td>GPIO1</td><td>Digital / ADC capable</td><td>Useful for simple analog or digital sensor input</td></tr>
+              <tr><td>GPIO2</td><td>Digital / ADC capable</td><td>Useful for basic sensor experiments</td></tr>
+              <tr><td>GPIO3</td><td>Digital / ADC capable</td><td>Useful for digital input or analog reading tasks</td></tr>
+              <tr><td>GPIO4</td><td>SPI SCK</td><td>Clock line for SPI peripherals</td></tr>
+              <tr><td>GPIO5</td><td>SPI MISO</td><td>Peripheral-to-MCU data line</td></tr>
+              <tr><td>GPIO6</td><td>SPI MOSI</td><td>MCU-to-peripheral data line</td></tr>
+              <tr><td>GPIO7</td><td>SPI CS / digital</td><td>Chip select or general digital I/O</td></tr>
+              <tr><td><strong>GPIO8</strong></td><td><strong>RGB LED / I2C SDA</strong></td><td>Confirmed by your MicroPython example</td></tr>
+              <tr><td>GPIO9</td><td>I2C SCL</td><td>I2C clock line</td></tr>
+              <tr><td>GPIO10</td><td>Digital I/O</td><td>General-purpose pin</td></tr>
+              <tr><td>GPIO20</td><td>UART RX</td><td>Serial receive pin</td></tr>
+              <tr><td>GPIO21</td><td>UART TX</td><td>Serial transmit pin</td></tr>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="usb-serial">
+        <div class="eyebrow">06 • USB</div>
+        <h2>USB & Serial</h2>
+        <p>This board uses the ESP32-C3 built-in USB function for programming and serial communication.</p>
+        <div class="grid-3">
+          <div class="card"><strong>Connector</strong><br><span class="muted">USB Type-C</span></div>
+          <div class="card"><strong>Connection method</strong><br><span class="muted">Native USB CDC</span></div>
+          <div class="card"><strong>Default serial speed</strong><br><span class="muted">115200 baud</span></div>
+        </div>
+        <div class="callout">If your computer does not detect the board, always test a known data cable first. Charge-only cables are one of the most common beginner problems.</div>
+      </section>
+
+      <section class="section" id="quick-start">
+        <div class="eyebrow">07 • Quick Start</div>
+        <h2>Quick Start for Complete Beginners</h2>
+        <p>Follow these steps if this is your first time using the board.</p>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div>
+              <strong>Prepare a USB Type-C data cable</strong>
+              <p>Make sure the cable supports both charging and data. If your board powers up but does not appear on the computer, the cable is often the reason.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div>
+              <strong>Connect the board</strong>
+              <p>Plug the board into your computer and wait a few seconds for the operating system to detect it.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div>
+              <strong>Check the serial port</strong>
+              <p><strong>Windows:</strong> open <em>Device Manager → Ports (COM & LPT)</em>.<br>
+                 <strong>macOS:</strong> open Terminal and run <code>ls /dev/cu.*</code>.<br>
+                 <strong>Linux:</strong> open Terminal and run <code>ls /dev/tty*</code>.
+              </p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div>
+              <strong>Choose your usage mode</strong>
+              <p>You can start in one of three common ways:</p>
+              <ul>
+                <li>Flash a ready-made <code>.bin</code> file</li>
+                <li>Use Arduino IDE for graphical sketch-based programming</li>
+                <li>Use MicroPython for Python-style scripting</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="flash-guide">
+        <div class="eyebrow">08 • Flashing</div>
+        <h2>Flash Firmware (.bin)</h2>
+        <p>This is the easiest option if you want the board to run an existing firmware file without writing code.</p>
+
+        <h3>What you need</h3>
+        <ul>
+          <li>The board</li>
+          <li>A USB Type-C data cable</li>
+          <li>A <code>.bin</code> firmware file</li>
+          <li>Python installed on the computer</li>
+          <li><code>esptool</code> installed</li>
+        </ul>
+
+        <h3>Step-by-step flashing guide</h3>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div>
+              <strong>Install Python</strong>
+              <p>If Python is not installed, install it first. On Windows, check the option that adds Python to PATH.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div>
+              <strong>Install esptool</strong>
+              <pre>pip install esptool</pre>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div>
+              <strong>Find your board's port</strong>
+              <p><strong>Windows:</strong> note the COM number, for example <code>COM5</code>.<br>
+                 <strong>macOS/Linux:</strong> note the device path, for example <code>/dev/cu.usbmodemXXXX</code>.
+              </p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div>
+              <strong>Enter download mode if needed</strong>
+              <p>If flashing fails, hold the <strong>BOOT</strong> button, plug in the USB cable, wait a few seconds, then release the button.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">5</div>
+            <div>
+              <strong>Run the flash command</strong>
+              <p>Replace <code>firmware.bin</code> with your actual file name.</p>
+              <pre>esptool.py --chip esp32c3 --baud 460800 write_flash 0x0 firmware.bin</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="good">For first-time users, start with a known-good single <code>.bin</code> file before moving on to multi-file firmware packages.</div>
+      </section>
+
+      <section class="section" id="flash-layout">
+        <div class="eyebrow">09 • Parameters</div>
+        <h2>Flash Layout & Recommended Parameters</h2>
+        <p>The uploaded flashing configuration suggests these common settings:</p>
+        <div class="grid-3">
+          <div class="card stat-card">
+            <div class="k">Flash mode</div>
+            <div class="v">DIO</div>
+            <div class="muted">Common reliable setting</div>
+          </div>
+          <div class="card stat-card">
+            <div class="k">Flash frequency</div>
+            <div class="v">40 MHz</div>
+            <div class="muted">Used in your flash arguments</div>
+          </div>
+          <div class="card stat-card">
+            <div class="k">Flash size</div>
+            <div class="v">Detect</div>
+            <div class="muted">Auto-detect where supported</div>
+          </div>
+        </div>
+
+        <h3>Common address map</h3>
+        <table>
+          <tr><th>Address</th><th>Content</th><th>Purpose</th></tr>
+          <tr><td>0x0000</td><td>Bootloader</td><td>Starts the chip and prepares the application</td></tr>
+          <tr><td>0x8000</td><td>Partition Table</td><td>Defines where different data sections are stored</td></tr>
+          <tr><td>0xD000</td><td>OTA Data</td><td>Stores OTA boot metadata</td></tr>
+          <tr><td>0xF000</td><td>PHY Init</td><td>Wireless radio initialization data</td></tr>
+          <tr><td>0x60000</td><td>Application</td><td>Main firmware area</td></tr>
+        </table>
+
+        <h3>Example multi-file flashing command</h3>
+        <pre>esptool.py --chip esp32c3 --baud 460800 --before default_reset --after hard_reset write_flash
+0x0 bootloader.bin
+0x8000 partition-table.bin
+0xD000 ota_data_initial.bin
+0xF000 phy_multiple_init_data.bin
+0x60000 esp-at.bin</pre>
+      </section>
+
+      <section class="section" id="arduino-guide">
+        <div class="eyebrow">10 • Arduino</div>
+        <h2>Arduino Setup Guide</h2>
+        <p>Arduino IDE is a comfortable entry point for beginners because the menus are visual and the example flow is straightforward.</p>
+
+        <h3>Detailed setup steps</h3>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div>
+              <strong>Install Arduino IDE</strong>
+              <p>Install Arduino IDE from the official Arduino website.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div>
+              <strong>Add the ESP32 board package URL</strong>
+              <p>Open <strong>File → Preferences</strong>.</p>
+              <p>Find <strong>Additional Boards Manager URLs</strong> and paste this address:</p>
+              <pre>https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json</pre>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div>
+              <strong>Install the ESP32 package</strong>
+              <p>Go to <strong>Tools → Board → Boards Manager</strong>, search for <code>ESP32</code>, then click <strong>Install</strong>.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div>
+              <strong>Select the board</strong>
+              <p>Go to <strong>Tools → Board → ESP32 Arduino → ESP32C3 Dev Module</strong>.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">5</div>
+            <div>
+              <strong>Select the port</strong>
+              <p>Go to <strong>Tools → Port</strong> and choose the board's COM port.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">6</div>
+            <div>
+              <strong>Install the RGB LED library</strong>
+              <p>Go to <strong>Sketch → Include Library → Manage Libraries</strong>, search for <code>Adafruit NeoPixel</code>, and install it.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">7</div>
+            <div>
+              <strong>Paste the LED test code and upload</strong>
+              <pre>#include &lt;Adafruit_NeoPixel.h&gt;
+
+#define PIN 8
+#define NUMPIXELS 1
+
+Adafruit_NeoPixel pixels(NUMPIXELS, PIN);
+
+void setup() {
+  pixels.begin();
+}
+
+void loop() {
+  pixels.setPixelColor(0, pixels.Color(255, 0, 0));
+  pixels.show();
+  delay(500);
+  pixels.setPixelColor(0, pixels.Color(0, 0, 0));
+  pixels.show();
+  delay(500);
+}</pre>
+              <p>Click the <strong>Upload</strong> button. If the upload fails, hold the <strong>BOOT</strong> button while the board connects.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="micropython-guide">
+        <div class="eyebrow">11 • MicroPython</div>
+        <h2>MicroPython Guide</h2>
+        <p>MicroPython is a strong beginner option because it uses Python-like syntax and lets you test ideas quickly.</p>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div>
+              <strong>Flash the MicroPython firmware</strong>
+              <p>Use the flashing method from the previous section, but choose the MicroPython firmware file.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div>
+              <strong>Open a MicroPython editor</strong>
+              <p>Thonny is a beginner-friendly choice because it includes an editor and can talk to the board over the serial port.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div>
+              <strong>Select the interpreter and port</strong>
+              <p>In Thonny, open <strong>Tools → Options → Interpreter</strong>. Choose <strong>MicroPython (ESP32)</strong> and select the board port.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div>
+              <strong>Paste and run the onboard RGB LED example</strong>
+              <pre>from machine import Pin
+import neopixel
+
+np = neopixel.NeoPixel(Pin(8), 1)
+np[0] = (255, 0, 0)
+np.write()</pre>
+              <p>This turns the onboard WS2812 LED red. Your uploaded example also confirms that GPIO8 is used for the RGB LED object.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="espidf-guide">
+        <div class="eyebrow">12 • ESP-IDF</div>
+        <h2>ESP-IDF Guide</h2>
+        <p>ESP-IDF is Espressif's official development framework. It offers deeper control and is the right next step once you understand ports, flashing, and basic examples.</p>
+        <pre>idf.py set-target esp32c3
+idf.py build
+idf.py flash
+idf.py monitor</pre>
+        <div class="callout">Use ESP-IDF after you are comfortable with basic flashing and serial monitoring.</div>
+      </section>
+
+      <section class="section" id="interface-guide">
+        <div class="eyebrow">13 • Interfaces</div>
+        <h2>I2C / SPI / UART Guide</h2>
+        <div class="grid-3">
+          <div class="card">
+            <strong>I2C</strong>
+            <p class="muted">SDA → GPIO8<br>SCL → GPIO9</p>
+          </div>
+          <div class="card">
+            <strong>SPI</strong>
+            <p class="muted">SCK → GPIO4<br>MISO → GPIO5<br>MOSI → GPIO6<br>CS → GPIO7</p>
+          </div>
+          <div class="card">
+            <strong>UART</strong>
+            <p class="muted">RX → GPIO20<br>TX → GPIO21</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="function-summary">
+        <div class="eyebrow">14 • Summary</div>
+        <h2>Function Summary</h2>
+        <div class="grid-2">
+          <div class="card">
+            <strong>What the board can do</strong>
+            <ul>
+              <li>Connect to Wi-Fi networks</li>
+              <li>Communicate with BLE devices</li>
+              <li>Control RGB LEDs and other digital outputs</li>
+              <li>Read digital and analog sensor signals</li>
+              <li>Drive I2C and SPI peripherals such as displays and sensors</li>
+              <li>Exchange data over UART serial links</li>
+            </ul>
+          </div>
+          <div class="card">
+            <strong>Good beginner projects</strong>
+            <ul>
+              <li>Wi-Fi weather station</li>
+              <li>OLED information display</li>
+              <li>BLE sensor node</li>
+              <li>RGB status indicator</li>
+              <li>Temperature logger</li>
+              <li>Simple home automation controller</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="troubleshooting">
+        <div class="eyebrow">15 • Help</div>
+        <h2>Troubleshooting</h2>
+
+        <h3>No COM port appears</h3>
+        <ul>
+          <li>Replace the USB cable with a known data cable</li>
+          <li>Try a different USB port</li>
+          <li>Reconnect the board and wait a few seconds</li>
+        </ul>
+
+        <h3>Upload failed</h3>
+        <ul>
+          <li>Hold the <strong>BOOT</strong> button while connecting USB</li>
+          <li>Close any serial monitor that is already using the port</li>
+          <li>Double-check that the selected port is correct</li>
+        </ul>
+
+        <h3>The LED does not light up</h3>
+        <ul>
+          <li>Use <strong>GPIO8</strong> for the onboard LED</li>
+          <li>Remember that it is a <strong>WS2812 programmable RGB LED</strong>, not a normal fixed-color LED</li>
+          <li>Use a NeoPixel-compatible library or driver</li>
+        </ul>
+
+        <h3>No serial output</h3>
+        <ul>
+          <li>Set the serial monitor to <strong>115200 baud</strong></li>
+          <li>Reset the board</li>
+          <li>Confirm that your code or firmware actually prints to the serial port</li>
+        </ul>
+      </section>
+    </main>
+  </div>
+
+  <div class="footer">ESP32-C3 Super Mini official-style product guide with left-side navigation and enhanced visual design.</div>
+
+  <script>
+    const links = [...document.querySelectorAll('.toc a')];
+    const map = new Map(links.map(a => [a.getAttribute('href').slice(1), a]));
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          links.forEach(a => a.classList.remove('active'));
+          const id = entry.target.id;
+          const current = map.get(id);
+          if (current) current.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-35% 0px -55% 0px', threshold: 0.1 });
+
+    document.querySelectorAll('section[id]').forEach(sec => obs.observe(sec));
+  </script>
+</body>
+</html>
