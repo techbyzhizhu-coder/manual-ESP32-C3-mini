@@ -490,7 +490,7 @@
           <span>160 MHz RISC-V</span>
           <span>2.4 GHz WiFi + BLE 5</span>
           <span>Native USB CDC</span>
-          <span>WS2812 RGB on GPIO8</span>
+          <span>Onboard LED (GPIO8)</span>
           <span>Arduino / MicroPython / ESP-IDF</span>
         </div>
       </div>
@@ -507,7 +507,7 @@
           </div>
           <div class="mini-stat">
             <div class="label">LED</div>
-            <div class="value">GPIO8 RGB</div>
+            <div class="value">GPIO8 LED</div>
           </div>
         </div>
       </div>
@@ -579,7 +579,7 @@
           <tr><td>USB</td><td>Native USB CDC</td><td>No separate USB-UART bridge chip is needed for basic use</td></tr>
           <tr><td>Logic voltage</td><td>3.3V</td><td>GPIO and peripherals should follow 3.3V logic rules</td></tr>
           <tr><td>Input voltage</td><td>5V from USB</td><td>The USB port powers the board, then onboard regulation converts it to 3.3V</td></tr>
-          <tr><td>Onboard LED</td><td>WS2812 RGB LED on GPIO8</td><td>You can test code and animations without adding external LEDs</td></tr>
+          <tr><td>Onboard LED</td><td>Single-color LED on GPIO8</td><td>You can test code and animations without adding external LEDs</td></tr>
           <tr><td>Common interfaces</td><td>I2C, SPI, UART, PWM, ADC</td><td>Supports sensors, displays, serial devices, and analog input use cases</td></tr>
           <tr><td>Flash</td><td>Firmware-dependent in your uploaded packages</td><td>Keep firmware package and flash settings matched</td></tr>
         </table>
@@ -602,7 +602,7 @@
               <div class="feature-item"><strong>BOOT button</strong><br><span class="muted">Used when entering download mode</span></div>
               <div class="feature-item"><strong>RESET button</strong><br><span class="muted">Restarts the board</span></div>
               <div class="feature-item"><strong>ESP32-C3 MCU</strong><br><span class="muted">Runs your firmware and application</span></div>
-              <div class="feature-item"><strong>WS2812 RGB LED</strong><br><span class="muted">Connected to GPIO8</span></div>
+              <div class="feature-item"><strong>Onboard LED</strong><br><span class="muted">Connected to GPIO8</span></div>
               <div class="feature-item"><strong>3.3V regulator</strong><br><span class="muted">Converts USB 5V down to 3.3V</span></div>
             </div>
             <div class="callout">Because the board uses native USB, most users do not need CH340 or CP2102 drivers for normal operation.</div>
@@ -630,7 +630,7 @@ GPIO pins → LEDs, sensors, displays, communication devices</pre>
           </div>
           <div class="card">
             <strong>Signal path</strong>
-            <p class="muted">GPIO pins are the connection points to external devices. On this board, GPIO8 is also wired to the onboard RGB LED.</p>
+            <p class="muted">GPIO pins are the connection points to external devices. On this board, GPIO8 is also wired to the onboard Onboard LED.</p>
           </div>
         </div>
       </section>
@@ -643,7 +643,7 @@ GPIO pins → LEDs, sensors, displays, communication devices</pre>
             <img src="引脚图.jpg" alt="Pinout diagram">
           </div>
           <div>
-            <p>Use the table below when wiring beginner projects such as OLED displays, temperature sensors, RGB LEDs, or serial modules.</p>
+            <p>Use the table below when wiring beginner projects such as OLED displays, temperature sensors, Onboard LEDs, or serial modules.</p>
             <table>
               <tr><th>GPIO</th><th>Suggested role</th><th>Note</th></tr>
               <tr><td>GPIO0</td><td>Digital I/O / boot related</td><td>Use carefully because boot behavior can depend on startup state</td></tr>
@@ -654,7 +654,7 @@ GPIO pins → LEDs, sensors, displays, communication devices</pre>
               <tr><td>GPIO5</td><td>SPI MISO</td><td>Peripheral-to-MCU data line</td></tr>
               <tr><td>GPIO6</td><td>SPI MOSI</td><td>MCU-to-peripheral data line</td></tr>
               <tr><td>GPIO7</td><td>SPI CS / digital</td><td>Chip select or general digital I/O</td></tr>
-              <tr><td><strong>GPIO8</strong></td><td><strong>RGB LED / I2C SDA</strong></td><td>Confirmed by your MicroPython example</td></tr>
+              <tr><td><strong>GPIO8</strong></td><td><strong>Onboard LED / I2C SDA</strong></td><td>Confirmed by your MicroPython example</td></tr>
               <tr><td>GPIO9</td><td>I2C SCL</td><td>I2C clock line</td></tr>
               <tr><td>GPIO10</td><td>Digital I/O</td><td>General-purpose pin</td></tr>
               <tr><td>GPIO20</td><td>UART RX</td><td>Serial receive pin</td></tr>
@@ -718,7 +718,40 @@ GPIO pins → LEDs, sensors, displays, communication devices</pre>
             </div>
           </div>
         </div>
-      </section>
+      
+<section class="section" id="led-test">
+<div class="eyebrow">LED TEST</div>
+<h2>Test Onboard LED (GPIO8)</h2>
+<p>This is the simplest way to verify your board is working.</p>
+
+<div class="good">
+✔ Beginner Friendly<br>
+✔ No Library Required<br>
+✔ Works Out of the Box
+</div>
+
+<pre>
+#define LED_PIN 8
+
+void setup() {
+  pinMode(LED_PIN, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(LED_PIN, HIGH);
+  delay(1000);
+
+  digitalWrite(LED_PIN, LOW);
+  delay(1000);
+}
+</pre>
+
+<div class="warn">
+⚠ This is NOT an RGB LED<br>
+Do NOT use FastLED or NeoPixel
+</div>
+</section>
+
 
       <section class="section" id="flash-guide">
         <div class="eyebrow">08 • Flashing</div>
@@ -867,7 +900,7 @@ GPIO pins → LEDs, sensors, displays, communication devices</pre>
           <div class="step">
             <div class="step-num">6</div>
             <div>
-              <strong>Install the RGB LED library</strong>
+              <strong>Install the Onboard LED library</strong>
               <p>Go to <strong>Sketch → Include Library → Manage Libraries</strong>, search for <code>Adafruit NeoPixel</code>, and install it.</p>
             </div>
           </div>
@@ -930,14 +963,14 @@ void loop() {
           <div class="step">
             <div class="step-num">4</div>
             <div>
-              <strong>Paste and run the onboard RGB LED example</strong>
+              <strong>Paste and run the onboard Onboard LED example</strong>
               <pre>from machine import Pin
 import neopixel
 
 np = neopixel.NeoPixel(Pin(8), 1)
 np[0] = (255, 0, 0)
 np.write()</pre>
-              <p>This turns the onboard WS2812 LED red. Your uploaded example also confirms that GPIO8 is used for the RGB LED object.</p>
+              <p>This turns the onboard WS2812 LED red. Your uploaded example also confirms that GPIO8 is used for the Onboard LED object.</p>
             </div>
           </div>
         </div>
@@ -982,7 +1015,7 @@ idf.py monitor</pre>
             <ul>
               <li>Connect to Wi-Fi networks</li>
               <li>Communicate with BLE devices</li>
-              <li>Control RGB LEDs and other digital outputs</li>
+              <li>Control Onboard LEDs and other digital outputs</li>
               <li>Read digital and analog sensor signals</li>
               <li>Drive I2C and SPI peripherals such as displays and sensors</li>
               <li>Exchange data over UART serial links</li>
@@ -1023,7 +1056,7 @@ idf.py monitor</pre>
         <h3>The LED does not light up</h3>
         <ul>
           <li>Use <strong>GPIO8</strong> for the onboard LED</li>
-          <li>Remember that it is a <strong>WS2812 programmable RGB LED</strong>, not a normal fixed-color LED</li>
+          <li>Remember that it is a <strong>WS2812 programmable Onboard LED</strong>, not a normal fixed-color LED</li>
           <li>Use a NeoPixel-compatible library or driver</li>
         </ul>
 
